@@ -1,0 +1,24 @@
+---
+- meta: end_play
+  when: (ansible_distribution != "CentOS" and ansible_distribution_major_version != "7")
+
+- name: Install components for building
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - targetcli
+
+- name: Copy script
+  copy:
+    src: script_iscsi.sh
+    dest: ~/script_iscsi.sh
+    owner: root
+    group: root
+    mode: 0644
+- name: run script
+  become: true
+  command: "sh ~/script_iscsi.sh"
+  ignore_errors: true
+...

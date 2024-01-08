@@ -1,0 +1,77 @@
+---
+- name: started_nginx
+  hosts: front1
+  become: true
+  tags:
+    - all
+
+  roles:
+    - base_nginx_config1
+
+- name: started_nginx2
+  hosts: front2
+  become: true
+  tags:
+    - all
+
+  roles:
+    - base_nginx_config2
+
+- name: iscsi_target
+  hosts: iscsi
+  become: true
+  tags:
+    - all
+
+  roles:
+    - iscsi_target
+
+- name: cluster prepare
+  hosts: pcs_servers
+  become: true
+  tags:
+    - all
+
+  roles:
+    - base_config
+    - pcs_install
+    - fence_agents
+  
+- name: cluster config
+  hosts: pcs1
+  become: true
+  tags:
+    - all
+
+  roles:
+    - pcs_config
+
+- name: cluster prepare
+  hosts: pcs_servers
+  become: true
+  tags:
+    - all
+
+  roles:
+    - iscsi_initiator
+    - multipath
+    - gfs2
+
+- name: gfs2 config
+  hosts: pcs1
+  become: true
+  tags:
+    - all
+
+  roles:
+    - config_gfs2
+
+- name: install db
+  hosts: db
+  become: true
+  tags:
+    - all
+
+  roles:
+    - install_db
+...

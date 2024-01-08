@@ -1,0 +1,5 @@
+- name: "restart_mysql"
+  systemd:
+    name: mariadb-server
+    state: restarted
+...

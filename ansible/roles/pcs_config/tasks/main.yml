@@ -1,0 +1,52 @@
+---
+- meta: end_play
+  when: (ansible_distribution != "CentOS" and ansible_distribution_major_version != "7")
+
+- name: Configuring cluster (step 1)
+  command: "{{ item }}"
+  with_items:
+    - " pcs cluster auth backend1.{{ domain }} backend2.{{ domain }} backend3.{{ domain }} -u hacluster -p {{ pcs_password }}"
+  no_log: true
+
+- name: Check for replay (/opt/pcs_config_done exists)
+  stat:
+    path: /opt/pcs_config_done
+  register: pcs_config_done
+
+- name: Configuring cluster (step 2)
+  command: "{{ item }}"
+  with_items:
+    - "pcs cluster setup --name {{ cluster_name }} backend1.{{ domain }} backend2.{{ domain }} backend3.{{ domain }}"
+  when:
+    - pcs_config_done.stat.exists != True
+
+- name: Set replay protection (/opt/pcs_config_done)
+  file:
+    path: /opt/pcs_config_done
+    state: touch
+    owner: root
+    group: root
+    mode: '0744'
+  when:
+    - pcs_config_done.stat.exists != True
+
+- name: Configuring cluster (step 3)
+  command: "{{ item }}"
+  with_items:
+    - "pcs cluster enable --all"
+    - "pcs cluster start --all"
+
+- name: Wait a little
+  pause:
+    seconds: 10
+
+- name: Check for replay (/opt/pcs_fence_config_done exists)
+  stat:
+    path: /opt/pcs_fence_config_done
+  register: pcs_fence_config_done
+
+- name: Configure fencing on Virtualbox
+  command: "{{ item }}"
+  with_items:
+    - "pcs property set stonith-enabled=false"
+...
