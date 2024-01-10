@@ -113,23 +113,23 @@ location / {
     local_file.nginx_file1
   ]
 }
-# resource "null_resource" "wait" {
-#   provisioner "local-exec" {
-#     command = "sleep 20"
-#   }
+resource "null_resource" "wait" {
+  provisioner "local-exec" {
+    command = "sleep 20"
+  }
 
-#   depends_on = [
-#     local_file.nginx_file2
-#   ]
-# }
-# resource "null_resource" "ansible_nginx" {
-#   provisioner "local-exec" {
-#     command = "ansible-playbook -u ubuntu -i ./ansible/inventory.yaml ./ansible/nginx.yaml"
-#   }
-#   depends_on = [
-#     null_resource.wait
-#   ]
-# }
+  depends_on = [
+    local_file.nginx_file2
+  ]
+}
+resource "null_resource" "ansible_nginx" {
+  provisioner "local-exec" {
+    command = "ansible-playbook -u centos -i ./ansible/inventory.yaml ./ansible/main.yml"
+  }
+  depends_on = [
+    null_resource.wait
+  ]
+}
 #  resource "null_resource" "ansible_nginx_uwsgi" {
 #    provisioner "local-exec" {
 #      command = "git clone https://github.com/vk1391/ansible-nginx-uwsgi.git"

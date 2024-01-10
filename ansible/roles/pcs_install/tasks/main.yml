@@ -10,28 +10,26 @@
     packages:
     - pcs
     - pacemaker
-    - fence-agents-all
+    - policycoreutils-python
+    - psmisc
 
-- name: Set password for local hacluster user
-  user:
-    name: "hacluster"
-    password: "{{ pcs_password | string | password_hash('sha512') }}" 
-    state: present
-    update_password: always
-    create_home: yes
-  notify: "restart pcsd"
-  no_log: true
-
-- name: Allow cluster processes on SELinux
-  seboolean:
-    name: daemons_enable_cluster_mode
-    state: yes
-    persistent: yes
-
+# - name: Set password for local hacluster user
+#   command: "echo clusterpassword123 | passwd --stdin hacluster"
+- name: upgrade pexpect
+  become: true
+  command: "sudo pip install pexpect --upgrade"
+  ignore_errors: true
+- name: step7
+  become: true
+  expect:
+    command: "passwd hacluster"
+    responses:
+      Новый пароль : 'clusterpassword123'
 - name: Enable Pacemaker service
   systemd:
     name: pcsd.service
     enabled: true
+    state: started
 
 - name: Configuring firewall services
   firewalld:
@@ -40,7 +38,6 @@
     state: enabled
     immediate: yes
   with_items:
-    - ssh
     - high-availability
 
 - meta: flush_handlers

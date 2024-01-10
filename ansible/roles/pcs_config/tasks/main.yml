@@ -5,8 +5,7 @@
 - name: Configuring cluster (step 1)
   command: "{{ item }}"
   with_items:
-    - " pcs cluster auth backend1.{{ domain }} backend2.{{ domain }} backend3.{{ domain }} -u hacluster -p {{ pcs_password }}"
-  no_log: true
+    - "pcs cluster auth pcs1 pcs2 pcs3 -u hacluster -p clusterpassword123"
 
 - name: Check for replay (/opt/pcs_config_done exists)
   stat:
@@ -16,7 +15,7 @@
 - name: Configuring cluster (step 2)
   command: "{{ item }}"
   with_items:
-    - "pcs cluster setup --name {{ cluster_name }} backend1.{{ domain }} backend2.{{ domain }} backend3.{{ domain }}"
+    - "pcs cluster setup --name {{ cluster_name }} pcs1 pcs2 pcs3"
   when:
     - pcs_config_done.stat.exists != True
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-targetcli /backstores/block create disk01 /dev/sdb
+targetcli /backstores/block create disk01 /dev/vdb
 targetcli /iscsi create iqn.2024-01.ru.otus:storage.target00
 targetcli /iscsi/iqn.2024-01.ru.otus:storage.target00/tpg1/portals create 0.0.0.0
 targetcli /iscsi/iqn.2024-01.ru.otus:storage.target00/tpg1/luns create /backstores/block/disk01 lun=1

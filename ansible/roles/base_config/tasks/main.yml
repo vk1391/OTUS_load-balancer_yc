@@ -11,51 +11,37 @@
     - epel-release
 
 - name: Set timezone
-  timezone:
-    name: "{{ ntp_timezone }}"
+  command: "{{ item }}"
+  with_items: 
+    - "timedatectl set-timezone Europe/Moscow"
+    - "timedatectl set-ntp true"
 
-- name: Force timesync with chrony
-  shell: "chronyc -a makestep"
-
+- name: Set locale
+  command: "localectl set-locale LC_CTYPE=en_US.utf8"
+  
 - name: Install additional packages
   yum:
     name: "{{ packages }}"
     state: present
   vars:
     packages:
-    - python2-cryptography
-    - setools-console
-    - libsemanage-python
-    - policycoreutils-python
     - firewalld
 
 - name: Set hostname
-  hostname:
-    name: "{{ ansible_hostname }}.{{ domain }}"
+  command: "sudo hostnamectl set-hostname {{ name }}"
 
-- name: Add my own IP address to /etc/hosts instead localhost
-  replace:
-    path: "/etc/hosts"
-    regexp: '^127\.0\.0\.1(\s+){{ ansible_hostname }}(\s+){{ ansible_hostname }}.*'
-    replace: "{{ ansible_host }} {{ ansible_hostname }}.{{ domain }} {{ ansible_hostname }}"
-
-- name: Add pcs1 to /etc/hosts
-  lineinfile:
-    path: "/etc/hosts"
-    state: present
-    line: "{{ ip_pcs1 }} backend1.{{ domain }} backend1"
-
-- name: Add pcs2 to /etc/hosts
-  lineinfile:
-    path: "/etc/hosts"
-    state: present
-    line: "{{ ip_pcs2 }} backend2.{{ domain }} backend2"
-
-- name: Add pcs3 to /etc/hosts
-  lineinfile:
-    path: "/etc/hosts"
-    state: present
-    line: "{{ ip_pcs3 }} backend3.{{ domain }} backend3"
+- name: copy /etc/hosts
+  copy:
+    content: |
+      127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+      ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+      {{ ip_pcs1 }} pcs1.domain.test pcs1
+      {{ ip_pcs2 }} pcs2.domain.test pcs2
+      {{ ip_pcs3 }} pcs3.domain.test pcs3
+    dest: "/etc/hosts"  
+    mode: 644
+    owner: root
+    group: root
 
 - name: Enable and start FirewallD
   systemd:

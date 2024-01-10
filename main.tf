@@ -125,8 +125,109 @@ resource "yandex_vpc_security_group" "nat-instance-sg" {
     v4_cidr_blocks = ["0.0.0.0/0"]
     port           = 21
   }
+  ingress {
+    protocol       = "TCP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 2224 
 }
-
+  ingress {
+    protocol       = "TCP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 3121 
+}
+  ingress {
+    protocol       = "TCP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5403 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5404 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5405 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5406 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5407 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5408 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5409 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5410 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5411 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5412 
+}
+  ingress {
+    protocol       = "TCP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 9929 
+}
+  ingress {
+    protocol       = "UDP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 9929
+}
+  ingress {
+    protocol       = "TCP"
+    description    = "pcs1"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 21064 
+}
+  ingress {
+    protocol       = "TCP"
+    description    = "iscsi"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 3260 
+}
+  ingress {
+    protocol       = "TCP"
+    description    = "iscsi"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 860 
+}
+}
 resource "yandex_compute_instance" "balance_nginx1" {
   name        = var.vm_name
   hostname    = var.vm_name
@@ -264,6 +365,13 @@ resource "yandex_compute_instance" "backend_nginx3" {
      ssh-keys           = local.ssh_key
   }
 }
+resource "yandex_compute_disk" "empty-disk" {
+  name       = "empty-disk"
+  type       = "network-hdd"
+  zone       = var.zone1
+  size       = "20"
+  block_size = "4096"
+}
 resource "yandex_compute_instance" "iscsi_target" {
   name        = var.vm_name6
   hostname    = var.vm_name6
@@ -281,6 +389,10 @@ resource "yandex_compute_instance" "iscsi_target" {
       size     = var.disk
       type     = var.disk_type
     }
+  }
+  secondary_disk {
+    disk_id = "${yandex_compute_disk.empty-disk.id}"
+    auto_delete = "true"
   }
 
   network_interface {

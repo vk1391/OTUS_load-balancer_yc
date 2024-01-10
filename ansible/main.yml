@@ -35,7 +35,6 @@
   roles:
     - base_config
     - pcs_install
-    - fence_agents
   
 - name: cluster config
   hosts: pcs1
