@@ -1,0 +1,3 @@
+---
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -W %h:%p -q centos@"62.84.119.64""'
+...

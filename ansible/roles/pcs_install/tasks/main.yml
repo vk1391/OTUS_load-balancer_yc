@@ -12,6 +12,10 @@
     - pacemaker
     - policycoreutils-python
     - psmisc
+    - python-pip
+    - python3-pip
+    - fence-agents-all
+
 
 # - name: Set password for local hacluster user
 #   command: "echo clusterpassword123 | passwd --stdin hacluster"
@@ -24,7 +28,17 @@
   expect:
     command: "passwd hacluster"
     responses:
-      Новый пароль : 'clusterpassword123'
+      Новый пароль:
+        - 'clusterpassword123'
+      Повторите ввод нового пароля:
+        - 'clusterpassword123'
+      
+- name: Allow cluster processes on SELinux
+  seboolean:
+    name: daemons_enable_cluster_mode
+    state: yes
+    persistent: yes
+
 - name: Enable Pacemaker service
   systemd:
     name: pcsd.service
@@ -39,6 +53,7 @@
     immediate: yes
   with_items:
     - high-availability
+    - ssh
 
 - meta: flush_handlers
 ...

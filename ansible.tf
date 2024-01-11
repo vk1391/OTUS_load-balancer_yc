@@ -45,6 +45,7 @@ all:
     ip_pcs1: "${yandex_compute_instance.backend_nginx1.network_interface.0.ip_address}" 
     ip_pcs2: "${yandex_compute_instance.backend_nginx2.network_interface.0.ip_address}"
     ip_pcs3: "${yandex_compute_instance.backend_nginx3.network_interface.0.ip_address}" 
+    iscsi_server: "${yandex_compute_instance.iscsi_target.network_interface.0.ip_address}" 
 ...
     DOC
   filename = "./ansible/inventory.yaml"

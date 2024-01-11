@@ -17,6 +17,15 @@
   become: true
   command: "sudo pcs constraint order start dlm-clone then clvmd-clone --force"
   ignore_errors: true
+- name: step3_5
+  become: true
+  command: "pcs cluster stop --all"
+- name: sleep 10 sec
+  command: sleep 10
+- name: step3_6
+  command: "pcs cluster start --all"
+- name: sleep 10 sec
+  command: sleep 15 
 - name: step4
   become: true
   command: "sudo pvcreate /dev/mapper/OtusDSK"

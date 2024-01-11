@@ -26,6 +26,10 @@
   vars:
     packages:
     - firewalld
+    - python2-cryptography
+    - setools-console
+    - libsemanage-python
+    - policycoreutils-python
 
 - name: Set hostname
   command: "sudo hostnamectl set-hostname {{ name }}"

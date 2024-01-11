@@ -15,11 +15,11 @@
 
 - name: add int multipath
   become: true
-  command: "sudo multipath -a /dev/sdb"
+  command: "sudo multipath -a /dev/sda"
   ignore_errors: true
 - name: fact wwid
   become: true
-  command: "sudo /lib/udev/scsi_id -gu /dev/sdb"
+  command: "sudo /lib/udev/scsi_id -gu /dev/sda"
   register: fact_wwid
 
 - name: Enable multipath service
